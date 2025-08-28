@@ -185,8 +185,8 @@
                     :key="index" 
                     class="bg-[#FCBF49]/10 border-l-4 border-[#FCBF49] rounded-r-lg p-3"
                   >
-                    <div v-if="item.issue" class="text-[#FCBF49] font-medium text-sm mb-1">{{ item.issue }}</div>
-                    <div v-if="item.suggestion" class="text-[#EAE2B7]/80 text-xs">{{ item.suggestion }}</div>
+                    <div v-if="typeof item === 'object' && item.issue" class="text-[#FCBF49] font-medium text-sm mb-1">{{ item.issue }}</div>
+                    <div v-if="typeof item === 'object' && item.suggestion" class="text-[#EAE2B7]/80 text-xs">{{ item.suggestion }}</div>
                     <div v-else-if="typeof item === 'string'" class="text-[#EAE2B7]/80 text-sm">{{ item }}</div>
                   </div>
                 </div>
@@ -337,8 +337,14 @@ const audioBlob = ref<Blob | null>(null)
 const transcribedText = ref('')
 const evaluation = ref<{
   score: number
+  accuracy_score?: number
+  completeness_score?: number
+  clarity_score?: number
+  presentation_score?: number
   strengths: string[]
-  improvements: string[]
+  improvements: (string | { issue: string; suggestion: string })[]
+  key_terms?: string[]
+  presentation_tips?: string[]
   overall_feedback: string
 } | null>(null)
 const showHistory = ref(false)
@@ -383,6 +389,22 @@ const getScoreLevel = (score: number) => {
   if (score >= 70) return '中等'
   if (score >= 60) return '及格'
   return '需要改进'
+}
+
+// 计算文本相似度的简单函数
+const calculateTextSimilarity = (text1: string, text2: string): number => {
+  if (!text1 || !text2) return 0
+  
+  const words1 = text1.toLowerCase().split(/\s+/)
+  const words2 = text2.toLowerCase().split(/\s+/)
+  
+  if (words1.length === 0 || words2.length === 0) return 0
+  
+  // 计算共同词汇的比例
+  const commonWords = words1.filter(word => words2.includes(word))
+  const similarity = commonWords.length / Math.max(words1.length, words2.length)
+  
+  return Math.min(similarity, 0.7) // 最高相似度限制为0.7
 }
 
 const checkSpeechRecognitionSupport = () => {
@@ -451,7 +473,7 @@ const startRecording = async () => {
   }
 }
 
-const stopRecording = () => {
+const stopRecording = async () => {
   try {
     // 停止语音识别
     speechRecognizer.stopRecognition()
@@ -473,6 +495,11 @@ const stopRecording = () => {
     
     console.log('语音识别已停止')
     
+    // 如果有转录文本，开始AI评估
+    if (transcribedText.value && transcribedText.value.trim().length > 0) {
+      await processRecording()
+    }
+    
   } catch (error) {
     console.error('停止语音识别失败:', error)
   }
@@ -482,11 +509,9 @@ const stopRecording = () => {
 const processWithTranscribedText = async (text: string) => {
   if (!text || !paragraph.value) return
   
-  // 停止录音状态
-  stopRecording()
-  
-  // 直接开始AI评估
-  await processRecording()
+  // 不要自动停止录音，让用户手动控制
+  // 只更新转录文本，继续录音
+  console.log('语音识别实时结果:', text)
 }
 
 const playRecording = () => {
@@ -555,17 +580,85 @@ const processRecording = async () => {
       
     } catch (parseError) {
       console.error('解析AI评估结果失败:', parseError)
+      console.log('原始AI响应:', aiResponse)
       
-      // 如果解析失败，使用备用评估
-      const fallbackEvaluation = {
-        score: Math.floor(Math.random() * 30) + 70,
-        strengths: ['复述基本准确', '表达流畅'],
-        improvements: ['建议增加细节描述', '可以加入更多专业术语'],
-        overall_feedback: '整体表现良好，建议继续加强练习。'
+      // 检查转录文本的质量
+      const transcriptLength = transcribedText.value.trim().length
+      const wordCount = transcribedText.value.trim().split(/\s+/).length
+      
+      // 如果转录文本过短或质量太差，给出合理的低分评估
+      if (transcriptLength < 10 || wordCount < 3) {
+        const lowQualityEvaluation = {
+          score: 20,
+          accuracy_score: 5,
+          completeness_score: 5,
+          clarity_score: 5,
+          presentation_score: 5,
+          strengths: [],
+          improvements: [
+            {
+              issue: '录音内容过短或不清晰',
+              suggestion: '请确保录音环境安静，说话清晰，并尽量完整复述原文内容'
+            },
+            {
+              issue: '复述内容与原文相关性不足',
+              suggestion: '请仔细阅读原文，理解核心内容后再进行复述'
+            }
+          ],
+          key_terms: [],
+          presentation_tips: [
+            '建议先熟读原文，理解核心概念',
+            '录音时保持清晰的发音和适中的语速',
+            '确保录音环境安静，避免背景噪音'
+          ],
+          overall_feedback: '本次复述内容过短或不够清晰，建议重新录制。请先仔细阅读原文，理解核心内容后再进行完整的复述练习。'
+        }
+        
+        evaluation.value = lowQualityEvaluation
+        await saveEvaluation(transcribedText.value, lowQualityEvaluation)
+      } else {
+        // 如果转录文本长度合理但解析失败，尝试重新请求AI评估
+        try {
+          // 使用更简单的提示词重新请求
+          const simplePrompt = `请评估以下复述内容（满分100分）：\n\n原文：${paragraph.value.content}\n\n复述：${transcribedText.value}\n\n请给出0-100的分数，并简要说明优缺点。以JSON格式返回：{"score": 分数, "strengths": ["优点1"], "improvements": ["改进建议1"], "overall_feedback": "总体评价"}`
+          
+          const retryResponse = await siliconFlowAPI.chat([
+            { role: 'user', content: simplePrompt }
+          ])
+          
+          const retryEvaluation = JSON.parse(retryResponse)
+          evaluation.value = retryEvaluation
+          await saveEvaluation(transcribedText.value, retryEvaluation)
+          
+        } catch (retryError) {
+          console.error('重试AI评估也失败:', retryError)
+          
+          // 最后的备用评估，基于文本长度给出合理分数
+          const textSimilarity = calculateTextSimilarity(paragraph.value.content, transcribedText.value)
+          const baseScore = Math.max(30, Math.min(70, textSimilarity * 100))
+          
+          const fallbackEvaluation = {
+            score: Math.round(baseScore),
+            accuracy_score: Math.round(baseScore * 0.4),
+            completeness_score: Math.round(baseScore * 0.25),
+            clarity_score: Math.round(baseScore * 0.2),
+            presentation_score: Math.round(baseScore * 0.15),
+            strengths: baseScore > 50 ? ['复述内容基本完整'] : [],
+            improvements: [
+              {
+                issue: 'AI评估系统暂时不可用',
+                suggestion: '建议稍后重试，或联系管理员检查系统状态'
+              }
+            ],
+            key_terms: [],
+            presentation_tips: ['建议重新进行复述练习'],
+            overall_feedback: `系统评估暂时不可用，基于文本分析给出参考分数：${Math.round(baseScore)}分。建议稍后重试获得详细评估。`
+          }
+          
+          evaluation.value = fallbackEvaluation
+          await saveEvaluation(transcribedText.value, fallbackEvaluation)
+        }
       }
-      
-      evaluation.value = fallbackEvaluation
-      await saveEvaluation(transcribedText.value, fallbackEvaluation)
     }
     
   } catch (error) {

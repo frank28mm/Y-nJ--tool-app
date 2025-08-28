@@ -1,3 +1,52 @@
+// 语音识别类型声明
+declare global {
+  interface Window {
+    SpeechRecognition: typeof SpeechRecognition
+    webkitSpeechRecognition: typeof SpeechRecognition
+  }
+}
+
+interface SpeechRecognition extends EventTarget {
+  continuous: boolean
+  interimResults: boolean
+  lang: string
+  maxAlternatives: number
+  start(): void
+  stop(): void
+  onresult: ((event: SpeechRecognitionEvent) => void) | null
+  onerror: ((event: SpeechRecognitionErrorEvent) => void) | null
+  onend: (() => void) | null
+}
+
+interface SpeechRecognitionEvent extends Event {
+  resultIndex: number
+  results: SpeechRecognitionResultList
+}
+
+interface SpeechRecognitionErrorEvent extends Event {
+  error: string
+}
+
+interface SpeechRecognitionResultList {
+  length: number
+  [index: number]: SpeechRecognitionResult
+}
+
+interface SpeechRecognitionResult {
+  isFinal: boolean
+  [index: number]: SpeechRecognitionAlternative
+}
+
+interface SpeechRecognitionAlternative {
+  transcript: string
+  confidence: number
+}
+
+declare var SpeechRecognition: {
+  prototype: SpeechRecognition
+  new(): SpeechRecognition
+}
+
 // 语音识别服务抽象类
 export interface SpeechRecognitionService {
   startRecognition(onResult: (text: string) => void, onError: (error: string) => void): Promise<void>
@@ -25,6 +74,13 @@ class BrowserSpeechRecognition implements SpeechRecognitionService {
       this.recognition.continuous = true
       this.recognition.interimResults = true
       this.recognition.lang = 'zh-CN'
+      this.recognition.maxAlternatives = 1
+      
+      // 防止因为静音而自动停止
+      if ('webkitSpeechRecognition' in window) {
+        // Chrome/Safari 特定配置
+        (this.recognition as any).serviceURI = undefined
+      }
 
       this.recognition.onresult = (event) => {
         let finalTranscript = ''
