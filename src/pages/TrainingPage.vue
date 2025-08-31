@@ -1,19 +1,19 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-[#003049] to-[#001D3D] text-[#EAE2B7] flex flex-col">
+  <div class="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 text-gray-900 flex flex-col">
     <!-- 顶部导航栏 -->
-    <header class="bg-[#001D3D]/50 backdrop-blur-sm border-b border-[#EAE2B7]/20 p-3 md:p-4">
+    <header class="bg-white/90 backdrop-blur-sm border-b border-gray-200 p-3 md:p-4 shadow-light">
       <div class="max-w-4xl mx-auto">
         <div class="flex items-center justify-between mb-2 md:mb-0">
           <div class="flex items-center space-x-3 md:space-x-4">
             <button
               @click="goBack"
-              class="p-2 hover:bg-[#EAE2B7]/10 rounded-md transition-colors text-[#EAE2B7]/65 hover:text-[#F77F00]"
+              class="p-2 hover:bg-gray-100 rounded-md transition-colors text-gray-500 hover:text-primary-600"
             >
               <ArrowLeft class="w-5 h-5" />
             </button>
             <div>
-              <h1 class="text-lg md:text-xl font-bold text-[#EAE2B7]">填空训练</h1>
-              <p class="text-[#EAE2B7]/65 text-xs md:text-sm hidden md:block">{{ paragraph?.title }}</p>
+              <h1 class="text-lg md:text-xl font-bold text-gray-900">填空训练</h1>
+              <p class="text-gray-600 text-xs md:text-sm hidden md:block">{{ paragraph?.title }}</p>
             </div>
           </div>
         </div>
@@ -21,16 +21,16 @@
         <!-- 训练统计 -->
         <div class="flex items-center justify-center md:justify-end space-x-4 md:space-x-6 text-xs md:text-sm">
           <div class="text-center">
-            <div class="text-[#F77F00] font-bold">{{ correctCount }}</div>
-            <div class="text-[#EAE2B7]/65">正确</div>
+            <div class="text-success-500 font-bold">{{ correctCount }}</div>
+            <div class="text-gray-600">正确</div>
           </div>
           <div class="text-center">
-            <div class="text-[#D62828] font-bold">{{ incorrectCount }}</div>
-            <div class="text-[#EAE2B7]/65">错误</div>
+            <div class="text-error-500 font-bold">{{ incorrectCount }}</div>
+            <div class="text-gray-600">错误</div>
           </div>
           <div class="text-center">
-            <div class="text-[#EAE2B7] font-bold">{{ Math.round(accuracy) }}%</div>
-            <div class="text-[#EAE2B7]/65">准确率</div>
+            <div class="text-gray-900 font-bold">{{ Math.round(accuracy) }}%</div>
+            <div class="text-gray-600">准确率</div>
           </div>
         </div>
       </div>
@@ -41,11 +41,11 @@
       <div class="max-w-4xl mx-auto">
         <div v-if="paragraph && fillBlanks.length > 0" class="space-y-6">
           <!-- 填空内容 -->
-          <div class="bg-[#003049] border border-[#EAE2B7]/20 rounded-lg p-4 md:p-8">
+          <div class="bg-white border border-gray-200 rounded-lg p-4 md:p-8 shadow-light">
             <div class="text-base md:text-lg leading-relaxed">
               <template v-for="(item, index) in fillBlanks" :key="index">
                 <!-- 文本部分 -->
-                <span class="text-[#EAE2B7]">{{ item.text }}</span>
+                <span class="text-gray-900">{{ item.text }}</span>
                 
                 <!-- 填空输入框 (只有当有答案时才显示) -->
                 <template v-if="item.blank">
@@ -54,8 +54,8 @@
                       v-model="userAnswers[index]"
                       @keyup.enter="focusNext(index)"
                       :class="[
-                        'px-2 md:px-3 py-1 bg-transparent border-b-2 text-center min-w-[80px] md:min-w-[120px] transition-colors text-sm md:text-base',
-                        'focus:outline-none focus:border-[#F77F00]',
+                        'px-2 md:px-3 py-1 bg-white border-b-2 text-center min-w-[80px] md:min-w-[120px] transition-colors text-sm md:text-base',
+                        'focus:outline-none focus:border-primary-500',
                         getInputClass(index)
                       ]"
                       :placeholder="`填入答案 (${item.blank.length}字)`"
@@ -66,7 +66,7 @@
                   <!-- 正确答案提示 -->
                   <span 
                     v-if="answerStates[index] === 'incorrect' && showCorrectAnswer[index]"
-                    class="inline-block ml-2 px-2 py-1 bg-[#F77F00]/10 text-[#F77F00] text-sm rounded"
+                    class="inline-block ml-2 px-2 py-1 bg-primary-50 text-primary-600 text-sm rounded border border-primary-200"
                   >
                     正确答案: {{ item.blank }}
                   </span>
@@ -80,14 +80,14 @@
             <button
               @click="checkAllAnswers"
               :disabled="!hasAnyAnswer"
-              class="w-full sm:w-auto px-4 md:px-6 py-2 md:py-3 bg-transparent border border-[#F77F00] text-[#F77F00] rounded-md hover:bg-[#F77F00]/10 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
+              class="w-full sm:w-auto px-4 md:px-6 py-2 md:py-3 bg-white border border-primary-500 text-primary-600 rounded-md hover:bg-primary-50 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base shadow-light"
             >
               检查答案
             </button>
             
             <button
               @click="resetTraining"
-              class="w-full sm:w-auto px-4 md:px-6 py-2 md:py-3 bg-transparent border border-[#EAE2B7]/65 text-[#EAE2B7]/65 rounded-md hover:bg-[#EAE2B7]/5 transition-colors font-medium text-sm md:text-base"
+              class="w-full sm:w-auto px-4 md:px-6 py-2 md:py-3 bg-white border border-gray-300 text-gray-600 rounded-md hover:bg-gray-50 transition-colors font-medium text-sm md:text-base shadow-light"
             >
               重新开始
             </button>
@@ -95,17 +95,17 @@
             <button
               v-if="isCompleted"
               @click="saveProgress"
-              class="w-full sm:w-auto px-4 md:px-6 py-2 md:py-3 bg-[#F77F00] text-[#003049] rounded-md hover:bg-[#F77F00]/90 transition-colors font-medium text-sm md:text-base"
+              class="w-full sm:w-auto px-4 md:px-6 py-2 md:py-3 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-md hover:from-primary-600 hover:to-primary-700 transition-colors font-medium text-sm md:text-base shadow-medium"
             >
               保存进度
             </button>
           </div>
 
           <!-- 完成提示 -->
-          <div v-if="isCompleted" class="text-center p-4 md:p-6 bg-[#F77F00]/10 border border-[#F77F00]/30 rounded-lg">
-            <CheckCircle class="w-12 h-12 text-[#F77F00] mx-auto mb-4" />
-            <h3 class="text-lg md:text-xl font-bold text-[#F77F00] mb-2">训练完成！</h3>
-            <p class="text-[#EAE2B7]/65 text-sm md:text-base">
+          <div v-if="isCompleted" class="text-center p-4 md:p-6 bg-success-50 border border-success-200 rounded-lg">
+            <CheckCircle class="w-12 h-12 text-success-500 mx-auto mb-4" />
+            <h3 class="text-lg md:text-xl font-bold text-success-600 mb-2">训练完成！</h3>
+            <p class="text-gray-600 text-sm md:text-base">
               准确率: {{ Math.round(accuracy) }}% | 
               正确: {{ correctCount }} | 
               错误: {{ incorrectCount }}
@@ -116,20 +116,20 @@
         <!-- 加载状态 -->
         <div v-else-if="loading" class="flex items-center justify-center h-64">
           <div class="text-center">
-            <Loader2 class="w-8 h-8 text-[#F77F00] animate-spin mx-auto mb-4" />
-            <p class="text-[#EAE2B7]/65">加载训练内容...</p>
+            <Loader2 class="w-8 h-8 text-primary-500 animate-spin mx-auto mb-4" />
+            <p class="text-gray-600">加载训练内容...</p>
           </div>
         </div>
 
         <!-- 错误状态 -->
         <div v-else class="flex items-center justify-center h-64">
           <div class="text-center">
-            <AlertCircle class="w-12 h-12 text-[#D62828] mx-auto mb-4" />
-            <h3 class="text-xl text-[#D62828] mb-2">加载失败</h3>
-            <p class="text-[#EAE2B7]/65 mb-4">无法加载训练内容，请稍后重试</p>
+            <AlertCircle class="w-12 h-12 text-error-500 mx-auto mb-4" />
+            <h3 class="text-xl text-error-600 mb-2">加载失败</h3>
+            <p class="text-gray-600 mb-4">无法加载训练内容，请稍后重试</p>
             <button
               @click="loadParagraph"
-              class="px-3 md:px-4 py-2 bg-transparent border border-[#F77F00] text-[#F77F00] rounded-md hover:bg-[#F77F00]/10 transition-colors text-sm md:text-base"
+              class="px-3 md:px-4 py-2 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-md hover:from-primary-600 hover:to-primary-700 transition-colors text-sm md:text-base shadow-medium"
             >
               重新加载
             </button>

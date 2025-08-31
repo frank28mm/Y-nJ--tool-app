@@ -2,18 +2,62 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 「记忆回响」落日星辰设计风格 */
+/* 「记忆回响」现代简洁设计风格 */
 :root {
-  /* 色彩系统 */
-  --color-bg-primary: #003049;     /* 质感主蓝 - 主背景色 */
-  --color-text-primary: #EAE2B7;   /* 香草色 - 主文字色 */
-  --color-text-secondary: rgba(234, 226, 183, 0.65); /* 香草色65%透明度 - 次要文字 */
-  --color-accent: #F77F00;         /* 橙色 - 交互/强调色 */
-  --color-warning: #FCBF49;        /* 黄原胶 - 警告状态 */
-  --color-error: #D62828;          /* 消防车红色 - 错误状态 */
+  /* 背景色系 */
+  --color-bg-primary: #FAFAFA;        /* 主背景 - 浅灰白色 */
+  --color-bg-secondary: #FFFFFF;      /* 卡片背景 - 纯白色 */
+  --color-bg-tertiary: #F5F5F5;       /* 辅助背景 - 浅灰色 */
+  
+  /* 文字色系 */
+  --color-text-primary: #1A1A1A;      /* 主文字 - 深灰黑色 */
+  --color-text-secondary: #666666;    /* 次要文字 - 中灰色 */
+  --color-text-tertiary: #999999;     /* 辅助文字 - 浅灰色 */
+  
+  /* 品牌色系 */
+  --color-primary: #2563EB;           /* 主品牌色 - 现代蓝色 */
+  --color-primary-light: #DBEAFE;     /* 主品牌色浅色 */
+  --color-primary-dark: #1D4ED8;      /* 主品牌色深色 */
+  
+  /* 功能色系 */
+  --color-success: #10B981;           /* 成功色 - 绿色 */
+  --color-warning: #F59E0B;           /* 警告色 - 橙色 */
+  --color-error: #EF4444;             /* 错误色 - 红色 */
+  --color-info: #3B82F6;              /* 信息色 - 蓝色 */
+  
+  /* 边框色系 */
+  --color-border-light: #E5E7EB;      /* 浅边框 */
+  --color-border-medium: #D1D5DB;     /* 中等边框 */
+  --color-border-dark: #9CA3AF;       /* 深边框 */
+  
+  /* 阴影色系 */
+  --shadow-light: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-medium: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-heavy: 0 10px 15px rgba(0, 0, 0, 0.1);
+  
+  /* 渐变色系 */
+  --gradient-primary: linear-gradient(135deg, #2563EB 0%, #3B82F6 100%);
+  --gradient-secondary: linear-gradient(135deg, #F8FAFC 0%, #E2E8F0 100%);
+  --gradient-accent: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  
+  /* 间距系统 */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+  --spacing-3xl: 64px;
+  
+  /* 圆角规范 */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
   
   /* 字体系统 */
-  font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-size: 16px;
   line-height: 1.6;
   font-weight: 400;
@@ -47,13 +91,13 @@ html, body {
 
 /* 链接样式 */
 a {
-  color: var(--color-accent);
+  color: var(--color-primary);
   text-decoration: none;
   transition: color 0.2s ease-in-out;
 }
 
 a:hover {
-  color: var(--color-accent);
+  color: var(--color-primary-dark);
   opacity: 0.8;
 }
 
@@ -82,23 +126,23 @@ input, textarea {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-text-secondary);
+  background: var(--color-border-medium);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-accent);
+  background: var(--color-primary);
 }
 
 /* 选中文本样式 */
 ::selection {
-  background: var(--color-accent);
-  color: var(--color-bg-primary);
+  background: var(--color-primary-light);
+  color: var(--color-text-primary);
 }
 
 /* 焦点样式 */
 :focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
@@ -110,18 +154,64 @@ input, textarea {
 
 /* 工具类 */
 .text-gradient {
-  background: linear-gradient(135deg, var(--color-text-primary), var(--color-accent));
+  background: var(--gradient-primary);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .shadow-glow {
-  box-shadow: 0 0 20px rgba(247, 127, 0, 0.1);
+  box-shadow: var(--shadow-medium);
 }
 
 .border-gradient {
   border: 1px solid;
-  border-image: linear-gradient(135deg, var(--color-accent), var(--color-text-secondary)) 1;
+  border-image: linear-gradient(135deg, var(--color-primary), var(--color-border-medium)) 1;
+}
+
+/* 现代组件样式 */
+.btn-primary {
+  background: var(--gradient-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  font-weight: 500;
+  box-shadow: var(--shadow-light);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-medium);
+}
+
+.btn-secondary {
+  background: var(--color-bg-secondary);
+  color: var(--color-primary);
+  border: 1px solid var(--color-border-medium);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md) var(--spacing-lg);
+  font-weight: 500;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-secondary:hover {
+  background: var(--color-primary-light);
+  border-color: var(--color-primary);
+}
+
+.card {
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-light);
+  border: 1px solid var(--color-border-light);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-medium);
+  transform: translateY(-2px);
 }
 

@@ -1,21 +1,21 @@
 <template>
-  <div class="min-h-screen bg-[#003049] flex flex-col">
+  <div class="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 text-gray-900 flex flex-col">
     <!-- 顶部导航栏 -->
-    <header class="border-b border-[#EAE2B7]/20 p-4">
+    <header class="border-b border-gray-200 p-4 bg-white/90 backdrop-blur-sm shadow-light">
       <div class="max-w-4xl mx-auto flex items-center justify-between">
         <div class="flex items-center space-x-4">
           <button
             @click="goBack"
-            class="text-[#EAE2B7]/65 hover:text-[#F77F00] transition-colors"
+            class="text-gray-500 hover:text-primary-600 hover:bg-gray-100 px-2 py-1 rounded transition-colors"
           >
             <ArrowLeft class="w-5 h-5" />
           </button>
           <div>
-            <h1 class="text-xl font-bold text-[#EAE2B7] flex items-center">
-              <Mic class="w-5 h-5 mr-2 text-[#F77F00]" />
+            <h1 class="text-xl font-bold text-gray-900 flex items-center">
+              <Mic class="w-5 h-5 mr-2 text-primary-500" />
               复述训练
             </h1>
-            <p class="text-[#EAE2B7]/65 text-sm">{{ paragraph?.title }}</p>
+            <p class="text-gray-600 text-sm">{{ paragraph?.title }}</p>
           </div>
         </div>
         
@@ -35,9 +35,9 @@
         <div class="max-w-4xl mx-auto">
           <!-- 原文展示 -->
           <div class="mb-8">
-            <h2 class="text-lg font-semibold text-[#EAE2B7] mb-4">原文内容</h2>
-            <div class="bg-[#EAE2B7]/5 border border-[#EAE2B7]/20 rounded-lg p-6">
-              <div class="text-[#EAE2B7] leading-relaxed whitespace-pre-wrap">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">原文内容</h2>
+            <div class="bg-white border border-gray-200 shadow-light rounded-lg p-6">
+              <div class="text-gray-700 leading-relaxed whitespace-pre-wrap">
                 {{ paragraph?.content }}
               </div>
             </div>
@@ -45,26 +45,26 @@
 
           <!-- 录音区域 -->
           <div class="mb-8">
-            <h2 class="text-lg font-semibold text-[#EAE2B7] mb-4">语音复述</h2>
-            <div class="bg-[#003049] border border-[#EAE2B7]/20 rounded-lg p-8 text-center">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">语音复述</h2>
+            <div class="bg-white border border-gray-200 shadow-light rounded-lg p-8 text-center">
               <!-- 录音状态显示 -->
               <div class="mb-6">
                 <div 
                   :class="[
                     'w-24 h-24 rounded-full mx-auto mb-4 flex items-center justify-center transition-all duration-300',
                     isRecording 
-                      ? 'bg-[#D62828]/20 border-2 border-[#D62828] animate-pulse' 
-                      : 'bg-[#F77F00]/10 border-2 border-[#F77F00] hover:bg-[#F77F00]/20'
+                      ? 'bg-red-100 border-2 border-red-500 animate-pulse' 
+                      : 'bg-primary-50 border-2 border-primary-500 hover:bg-primary-100'
                   ]"
                 >
-                  <Mic :class="['w-8 h-8', isRecording ? 'text-[#D62828]' : 'text-[#F77F00]']" />
+                  <Mic :class="['w-8 h-8', isRecording ? 'text-red-500' : 'text-primary-500']" />
                 </div>
                 
-                <div class="text-[#EAE2B7] mb-2">
+                <div class="text-gray-700 mb-2">
                   {{ isRecording ? '正在录音...' : '点击开始录音' }}
                 </div>
                 
-                <div v-if="recordingTime > 0" class="text-[#EAE2B7]/65 text-sm">
+                <div v-if="recordingTime > 0" class="text-gray-600 text-sm">
                   录音时长: {{ formatTime(recordingTime) }}
                 </div>
               </div>
@@ -75,7 +75,7 @@
                   v-if="!isRecording"
                   @click="startRecording"
                   :disabled="isProcessing"
-                  class="px-6 py-3 bg-[#F77F00] text-[#003049] rounded-lg hover:bg-[#F77F00]/90 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+                  class="px-6 py-3 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-lg hover:from-primary-600 hover:to-primary-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2 shadow-medium"
                 >
                   <Mic class="w-4 h-4" />
                   <span>开始录音</span>
@@ -84,7 +84,7 @@
                 <button
                   v-else
                   @click="stopRecording"
-                  class="px-6 py-3 bg-[#D62828] text-white rounded-lg hover:bg-[#D62828]/90 transition-colors font-medium flex items-center space-x-2"
+                  class="px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-lg hover:from-red-600 hover:to-red-700 transition-colors font-medium flex items-center space-x-2 shadow-medium"
                 >
                   <Square class="w-4 h-4" />
                   <span>停止录音</span>
@@ -94,7 +94,7 @@
                   v-if="audioBlob && !isRecording"
                   @click="playRecording"
                   :disabled="isPlaying"
-                  class="px-4 py-3 bg-transparent border border-[#F77F00] text-[#F77F00] rounded-lg hover:bg-[#F77F00]/10 transition-colors disabled:opacity-50"
+                  class="px-4 py-3 bg-white border border-primary-500 text-primary-600 rounded-lg hover:bg-primary-50 transition-colors disabled:opacity-50 shadow-light"
                 >
                   <Play v-if="!isPlaying" class="w-4 h-4" />
                   <Pause v-else class="w-4 h-4" />
@@ -105,9 +105,9 @@
 
           <!-- 转录文本 -->
           <div v-if="transcribedText" class="mb-8">
-            <h2 class="text-lg font-semibold text-[#EAE2B7] mb-4">语音转录</h2>
-            <div class="bg-[#EAE2B7]/5 border border-[#EAE2B7]/20 rounded-lg p-6">
-              <div class="text-[#EAE2B7] leading-relaxed whitespace-pre-wrap">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">语音转录</h2>
+            <div class="bg-white border border-gray-200 shadow-light rounded-lg p-6">
+              <div class="text-gray-700 leading-relaxed whitespace-pre-wrap">
                 {{ transcribedText }}
               </div>
             </div>
@@ -115,17 +115,17 @@
 
           <!-- AI评估结果 -->
           <div v-if="evaluation" class="mb-8">
-            <h2 class="text-lg font-semibold text-[#EAE2B7] mb-4">AI评估报告</h2>
-            <div class="bg-[#003049] border border-[#EAE2B7]/20 rounded-lg p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">AI评估报告</h2>
+            <div class="bg-white border border-gray-200 shadow-light rounded-lg p-6">
               <!-- 综合评分 -->
               <div class="flex items-center justify-between mb-6">
-                <div class="text-3xl font-bold text-[#F77F00]">{{ evaluation.score }}分</div>
+                <div class="text-3xl font-bold text-primary-600">{{ evaluation.score }}分</div>
                 <div class="text-right">
-                  <div class="text-[#F77F00] font-bold text-lg" >{{ getScoreLevel(evaluation.score) }}</div>
+                  <div class="text-primary-600 font-bold text-lg" >{{ getScoreLevel(evaluation.score) }}</div>
                   <div class="flex items-center space-x-2 mt-2">
-                    <div class="w-32 h-2 bg-[#EAE2B7]/20 rounded-full overflow-hidden">
+                    <div class="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
                       <div 
-                        class="h-full bg-gradient-to-r from-[#D62828] via-[#FCBF49] to-[#F77F00] transition-all duration-500"
+                        class="h-full bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 transition-all duration-500"
                         :style="{ width: `${evaluation.score}%` }"
                       ></div>
                     </div>
@@ -135,30 +135,30 @@
 
               <!-- 各维度评分 -->
               <div v-if="evaluation.accuracy_score || evaluation.completeness_score || evaluation.clarity_score || evaluation.presentation_score" class="mb-6">
-                <h3 class="text-[#EAE2B7] font-medium mb-3">各维度评分</h3>
+                <h3 class="text-gray-900 font-medium mb-3">各维度评分</h3>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div class="bg-[#EAE2B7]/5 rounded-lg p-3 text-center">
-                    <div class="text-2xl font-bold text-[#F77F00]">{{ evaluation.accuracy_score || 0 }}</div>
-                    <div class="text-xs text-[#EAE2B7]/65">信息准确性</div>
+                  <div class="bg-blue-50 rounded-lg p-3 text-center">
+                    <div class="text-2xl font-bold text-blue-600">{{ evaluation.accuracy_score || 0 }}</div>
+                    <div class="text-xs text-gray-600">信息准确性</div>
                   </div>
-                  <div class="bg-[#EAE2B7]/5 rounded-lg p-3 text-center">
-                    <div class="text-2xl font-bold text-[#F77F00]">{{ evaluation.completeness_score || 0 }}</div>
-                    <div class="text-xs text-[#EAE2B7]/65">完整性</div>
+                  <div class="bg-green-50 rounded-lg p-3 text-center">
+                    <div class="text-2xl font-bold text-green-600">{{ evaluation.completeness_score || 0 }}</div>
+                    <div class="text-xs text-gray-600">完整性</div>
                   </div>
-                  <div class="bg-[#EAE2B7]/5 rounded-lg p-3 text-center">
-                    <div class="text-2xl font-bold text-[#F77F00]">{{ evaluation.clarity_score || 0 }}</div>
-                    <div class="text-xs text-[#EAE2B7]/65">表达清晰度</div>
+                  <div class="bg-purple-50 rounded-lg p-3 text-center">
+                    <div class="text-2xl font-bold text-purple-600">{{ evaluation.clarity_score || 0 }}</div>
+                    <div class="text-xs text-gray-600">表达清晰度</div>
                   </div>
-                  <div class="bg-[#EAE2B7]/5 rounded-lg p-3 text-center">
-                    <div class="text-2xl font-bold text-[#F77F00]">{{ evaluation.presentation_score || 0 }}</div>
-                    <div class="text-xs text-[#EAE2B7]/65">讲解技巧</div>
+                  <div class="bg-orange-50 rounded-lg p-3 text-center">
+                    <div class="text-2xl font-bold text-orange-600">{{ evaluation.presentation_score || 0 }}</div>
+                    <div class="text-xs text-gray-600">讲解技巧</div>
                   </div>
                 </div>
               </div>
 
               <!-- 优点 -->
               <div v-if="evaluation.strengths && evaluation.strengths.length > 0" class="mb-4">
-                <h3 class="text-[#F77F00] font-medium mb-3 flex items-center">
+                <h3 class="text-success-600 font-medium mb-3 flex items-center">
                   <CheckCircle class="w-5 h-5 mr-2" />
                   优点亮点
                 </h3>
@@ -166,16 +166,16 @@
                   <div 
                     v-for="(strength, index) in evaluation.strengths" 
                     :key="index" 
-                    class="bg-[#F77F00]/10 border-l-4 border-[#F77F00] rounded-r-lg p-3"
+                    class="bg-success-50 border-l-4 border-success-500 rounded-r-lg p-3"
                   >
-                    <div class="text-[#F77F00] font-medium text-sm">{{ strength }}</div>
+                    <div class="text-success-700 font-medium text-sm">{{ strength }}</div>
                   </div>
                 </div>
               </div>
 
               <!-- 改进建议 -->
               <div v-if="evaluation.improvements && evaluation.improvements.length > 0" class="mb-4">
-                <h3 class="text-[#FCBF49] font-medium mb-3 flex items-center">
+                <h3 class="text-warning-600 font-medium mb-3 flex items-center">
                   <AlertTriangle class="w-5 h-5 mr-2" />
                   改进建议
                 </h3>
@@ -183,18 +183,18 @@
                   <div 
                     v-for="(item, index) in evaluation.improvements" 
                     :key="index" 
-                    class="bg-[#FCBF49]/10 border-l-4 border-[#FCBF49] rounded-r-lg p-3"
+                    class="bg-warning-50 border-l-4 border-warning-500 rounded-r-lg p-3"
                   >
-                    <div v-if="typeof item === 'object' && item.issue" class="text-[#FCBF49] font-medium text-sm mb-1">{{ item.issue }}</div>
-                    <div v-if="typeof item === 'object' && item.suggestion" class="text-[#EAE2B7]/80 text-xs">{{ item.suggestion }}</div>
-                    <div v-else-if="typeof item === 'string'" class="text-[#EAE2B7]/80 text-sm">{{ item }}</div>
+                    <div v-if="typeof item === 'object' && item.issue" class="text-warning-700 font-medium text-sm mb-1">{{ item.issue }}</div>
+                    <div v-if="typeof item === 'object' && item.suggestion" class="text-gray-600 text-xs">{{ item.suggestion }}</div>
+                    <div v-else-if="typeof item === 'string'" class="text-gray-600 text-sm">{{ item }}</div>
                   </div>
                 </div>
               </div>
 
               <!-- 关键词汇建议 -->
               <div v-if="evaluation.key_terms && evaluation.key_terms.length > 0" class="mb-4">
-                <h3 class="text-[#EAE2B7] font-medium mb-2 flex items-center">
+                <h3 class="text-gray-900 font-medium mb-2 flex items-center">
                   <BookOpen class="w-4 h-4 mr-2" />
                   关键词汇建议
                 </h3>
@@ -202,14 +202,14 @@
                   <span 
                     v-for="term in evaluation.key_terms" 
                     :key="term" 
-                    class="px-2 py-1 bg-[#EAE2B7]/20 text-[#EAE2B7] text-xs rounded-full"
+                    class="px-2 py-1 bg-primary-50 text-primary-600 text-xs rounded-full border border-primary-200"
                   >{{ term }}</span>
                 </div>
               </div>
 
               <!-- 讲解技巧建议 -->
               <div v-if="evaluation.presentation_tips && evaluation.presentation_tips.length > 0" class="mb-4">
-                <h3 class="text-[#EAE2B7] font-medium mb-2 flex items-center">
+                <h3 class="text-gray-900 font-medium mb-2 flex items-center">
                   <Mic class="w-4 h-4 mr-2" />
                   讲解技巧建议
                 </h3>
@@ -217,15 +217,15 @@
                   <div 
                     v-for="(tip, index) in evaluation.presentation_tips" 
                     :key="index" 
-                    class="text-[#EAE2B7]/80 text-sm bg-[#EAE2B7]/5 rounded-lg p-2"
+                    class="text-gray-600 text-sm bg-gray-50 rounded-lg p-2"
                   >{{ tip }}</div>
                 </div>
               </div>
 
               <!-- 总体反馈 -->
-              <div class="border-t border-[#EAE2B7]/20 pt-4">
-                <h3 class="text-[#EAE2B7] font-medium mb-2">总体评价</h3>
-                <p class="text-[#EAE2B7]/80 text-sm leading-relaxed">
+              <div class="border-t border-gray-200 pt-4">
+                <h3 class="text-gray-900 font-medium mb-2">总体评价</h3>
+                <p class="text-gray-600 text-sm leading-relaxed">
                   {{ evaluation.overall_feedback }}
                 </p>
               </div>
@@ -234,47 +234,47 @@
 
           <!-- 语音识别状态 -->
           <div v-if="!isSpeechRecognitionSupported" class="mb-4">
-            <div class="bg-[#D62828]/10 border border-[#D62828]/20 rounded-lg p-4">
+            <div class="bg-error-50 border border-error-200 rounded-lg p-4">
               <div class="flex items-center">
-                <AlertTriangle class="w-5 h-5 text-[#D62828] mr-2" />
+                <AlertTriangle class="w-5 h-5 text-error-500 mr-2" />
                 <div>
-                  <h3 class="text-[#D62828] font-medium">语音识别不可用</h3>
-                  <p class="text-[#D62828]/80 text-sm">{{ recognitionStatus }}</p>
+                  <h3 class="text-error-600 font-medium">语音识别不可用</h3>
+                  <p class="text-error-600 text-sm">{{ recognitionStatus }}</p>
                 </div>
               </div>
             </div>
           </div>
 
           <div v-else-if="recognitionStatus" class="mb-4">
-            <div class="bg-[#F77F00]/10 border border-[#F77F00]/20 rounded-lg p-3">
+            <div class="bg-success-50 border border-success-200 rounded-lg p-3">
               <div class="flex items-center">
-                <CheckCircle class="w-4 h-4 text-[#F77F00] mr-2" />
-                <span class="text-[#F77F00] text-sm">{{ recognitionStatus }}</span>
+                <CheckCircle class="w-4 h-4 text-success-500 mr-2" />
+                <span class="text-success-600 text-sm">{{ recognitionStatus }}</span>
               </div>
             </div>
           </div>
 
           <!-- 处理状态 -->
           <div v-if="isProcessing" class="text-center py-8">
-            <Loader2 class="w-8 h-8 text-[#F77F00] animate-spin mx-auto mb-4" />
-            <div class="text-[#EAE2B7]/65 mb-4">{{ processingStatus }}</div>
+            <Loader2 class="w-8 h-8 text-primary-500 animate-spin mx-auto mb-4" />
+            <div class="text-gray-600 mb-4">{{ processingStatus }}</div>
             
             <!-- AI思考过程显示 -->
             <div v-if="aiThinkingSteps.length > 0" class="max-w-2xl mx-auto">
-              <div class="bg-[#EAE2B7]/5 border border-[#EAE2B7]/20 rounded-lg p-4 text-left">
-                <h3 class="text-[#F77F00] font-medium mb-2">AI思考过程：</h3>
+              <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 text-left">
+                <h3 class="text-primary-600 font-medium mb-2">AI思考过程：</h3>
                 <div class="space-y-2">
                   <div 
                     v-for="(step, index) in aiThinkingSteps" 
                     :key="index"
-                    class="text-[#EAE2B7]/70 text-sm flex items-start"
+                    class="text-gray-700 text-sm flex items-start"
                   >
                     <span 
                       :class="[
                         'w-2 h-2 rounded-full mt-2 mr-3 flex-shrink-0',
-                        step.status === 'processing' ? 'bg-[#F77F00] animate-pulse' :
-                        step.status === 'completed' ? 'bg-[#008000]' :
-                        'bg-[#EAE2B7]/30'
+                        step.status === 'processing' ? 'bg-primary-500 animate-pulse' :
+                        step.status === 'completed' ? 'bg-success-500' :
+                        'bg-gray-300'
                       ]"
                     ></span>
                     <span>{{ step.text }}</span>
@@ -391,21 +391,77 @@ const getScoreLevel = (score: number) => {
   return '需要改进'
 }
 
-// 计算文本相似度的简单函数
-const calculateTextSimilarity = (text1: string, text2: string): number => {
+// TypeScript接口定义
+interface QualityAnalysis {
+  isEmpty: boolean
+  isTooShort: boolean
+  isRepeated: boolean
+  isDisproportionate: boolean
+  wordCount: number
+  charCount: number
+  qualityScore: number
+  issues: string[]
+}
+
+interface EvaluationResult {
+  score: number
+  accuracy_score: number
+  completeness_score: number
+  clarity_score: number
+  presentation_score: number
+  strengths: string[]
+  improvements: Array<{issue: string, suggestion: string} | string>
+  key_terms: string[]
+  presentation_tips: string[]
+  overall_feedback: string
+}
+
+// 注意：本地评估函数已移除，严格使用AI评估
+
+// 改进的Jaccard相似度算法
+const calculateJaccardSimilarity = (text1: string, text2: string): number => {
   if (!text1 || !text2) return 0
   
-  const words1 = text1.toLowerCase().split(/\s+/)
-  const words2 = text2.toLowerCase().split(/\s+/)
+  // 文本预处理：转小写，分词，去除标点
+  const processText = (text: string): Set<string> => {
+    return new Set(
+      text.toLowerCase()
+        .replace(/[^\u4e00-\u9fa5a-zA-Z0-9\s]/g, '') // 保留中文、英文、数字和空格
+        .split(/\s+/)
+        .filter(word => word.length > 0)
+    )
+  }
   
-  if (words1.length === 0 || words2.length === 0) return 0
+  const set1 = processText(text1)
+  const set2 = processText(text2)
   
-  // 计算共同词汇的比例
-  const commonWords = words1.filter(word => words2.includes(word))
-  const similarity = commonWords.length / Math.max(words1.length, words2.length)
+  if (set1.size === 0 || set2.size === 0) return 0
   
-  return Math.min(similarity, 0.7) // 最高相似度限制为0.7
+  // 计算交集
+  const intersection = new Set([...set1].filter(word => set2.has(word)))
+  
+  // 计算并集
+  const union = new Set([...set1, ...set2])
+  
+  // Jaccard相似度 = |交集| / |并集|
+  return intersection.size / union.size
 }
+
+// 兼容旧版本的相似度函数
+const calculateSimilarity = (text1: string, text2: string): number => {
+  return calculateJaccardSimilarity(text1, text2)
+}
+
+// 文本相似度计算（使用Jaccard算法）
+const calculateTextSimilarity = (text1: string, text2: string): number => {
+  return calculateJaccardSimilarity(text1, text2)
+}
+
+// 本地评估函数已移除，严格使用AI评估
+
+// 智能评估函数已移除，严格使用AI评估
+
+// 所有本地评估辅助函数已移除，严格使用AI评估
 
 const checkSpeechRecognitionSupport = () => {
   const compatibility = checkSpeechRecognitionCompatibility()
@@ -427,7 +483,7 @@ const startRecording = async () => {
     checkSpeechRecognitionSupport()
     
     if (!isSpeechRecognitionSupported.value) {
-      alert(recognitionStatus.value)
+      alert(`${recognitionStatus.value}\n\n如果您使用的是Chrome浏览器，请：\n1. 点击地址栏左侧的锁形图标\n2. 允许麦克风权限\n3. 刷新页面后重试\n\n或者尝试使用HTTPS访问：https://localhost:5174`)
       return
     }
     
@@ -545,9 +601,12 @@ const processRecording = async () => {
   ]
   
   try {
+    // 严格使用AI评估，不进行任何本地质量检查或备用评估
+    console.log('开始AI评估，原文长度:', paragraph.value.content.length, '复述长度:', transcribedText.value.length)
     
-    // 使用流式AI评估
     let aiResponse = ''
+    
+    // 调用AI评估API
     await siliconFlowAPI.evaluateParaphrase(
       paragraph.value.content,
       transcribedText.value,
@@ -567,110 +626,63 @@ const processRecording = async () => {
       }
     )
     
+    // 验证AI响应
+    if (!aiResponse || aiResponse.trim().length === 0) {
+      throw new Error('AI评估返回空响应')
+    }
+    
+    console.log('AI评估原始响应:', aiResponse)
+    
     // 解析AI评估结果
+    let evaluationData
     try {
-      const evaluationData = JSON.parse(aiResponse)
-      evaluation.value = evaluationData
-      
-      // 更新最后一步为完成状态
-      aiThinkingSteps.value[3] = { text: '评估结果总结完成', status: 'completed' }
-      
-      // 保存评估结果
-      await saveEvaluation(transcribedText.value, evaluationData)
-      
+      // 尝试直接解析JSON
+      evaluationData = JSON.parse(aiResponse)
     } catch (parseError) {
-      console.error('解析AI评估结果失败:', parseError)
-      console.log('原始AI响应:', aiResponse)
-      
-      // 检查转录文本的质量
-      const transcriptLength = transcribedText.value.trim().length
-      const wordCount = transcribedText.value.trim().split(/\s+/).length
-      
-      // 如果转录文本过短或质量太差，给出合理的低分评估
-      if (transcriptLength < 10 || wordCount < 3) {
-        const lowQualityEvaluation = {
-          score: 20,
-          accuracy_score: 5,
-          completeness_score: 5,
-          clarity_score: 5,
-          presentation_score: 5,
-          strengths: [],
-          improvements: [
-            {
-              issue: '录音内容过短或不清晰',
-              suggestion: '请确保录音环境安静，说话清晰，并尽量完整复述原文内容'
-            },
-            {
-              issue: '复述内容与原文相关性不足',
-              suggestion: '请仔细阅读原文，理解核心内容后再进行复述'
-            }
-          ],
-          key_terms: [],
-          presentation_tips: [
-            '建议先熟读原文，理解核心概念',
-            '录音时保持清晰的发音和适中的语速',
-            '确保录音环境安静，避免背景噪音'
-          ],
-          overall_feedback: '本次复述内容过短或不够清晰，建议重新录制。请先仔细阅读原文，理解核心内容后再进行完整的复述练习。'
-        }
-        
-        evaluation.value = lowQualityEvaluation
-        await saveEvaluation(transcribedText.value, lowQualityEvaluation)
+      console.log('直接JSON解析失败，尝试提取JSON部分')
+      // 尝试从响应中提取JSON部分
+      const jsonMatch = aiResponse.match(/\{[\s\S]*\}/)
+      if (jsonMatch) {
+        evaluationData = JSON.parse(jsonMatch[0])
       } else {
-        // 如果转录文本长度合理但解析失败，尝试重新请求AI评估
-        try {
-          // 使用更简单的提示词重新请求
-          const simplePrompt = `请评估以下复述内容（满分100分）：\n\n原文：${paragraph.value.content}\n\n复述：${transcribedText.value}\n\n请给出0-100的分数，并简要说明优缺点。以JSON格式返回：{"score": 分数, "strengths": ["优点1"], "improvements": ["改进建议1"], "overall_feedback": "总体评价"}`
-          
-          const retryResponse = await siliconFlowAPI.chat([
-            { role: 'user', content: simplePrompt }
-          ])
-          
-          const retryEvaluation = JSON.parse(retryResponse)
-          evaluation.value = retryEvaluation
-          await saveEvaluation(transcribedText.value, retryEvaluation)
-          
-        } catch (retryError) {
-          console.error('重试AI评估也失败:', retryError)
-          
-          // 最后的备用评估，基于文本长度给出合理分数
-          const textSimilarity = calculateTextSimilarity(paragraph.value.content, transcribedText.value)
-          const baseScore = Math.max(30, Math.min(70, textSimilarity * 100))
-          
-          const fallbackEvaluation = {
-            score: Math.round(baseScore),
-            accuracy_score: Math.round(baseScore * 0.4),
-            completeness_score: Math.round(baseScore * 0.25),
-            clarity_score: Math.round(baseScore * 0.2),
-            presentation_score: Math.round(baseScore * 0.15),
-            strengths: baseScore > 50 ? ['复述内容基本完整'] : [],
-            improvements: [
-              {
-                issue: 'AI评估系统暂时不可用',
-                suggestion: '建议稍后重试，或联系管理员检查系统状态'
-              }
-            ],
-            key_terms: [],
-            presentation_tips: ['建议重新进行复述练习'],
-            overall_feedback: `系统评估暂时不可用，基于文本分析给出参考分数：${Math.round(baseScore)}分。建议稍后重试获得详细评估。`
-          }
-          
-          evaluation.value = fallbackEvaluation
-          await saveEvaluation(transcribedText.value, fallbackEvaluation)
-        }
+        throw new Error('无法从AI响应中提取有效的JSON数据')
       }
     }
     
+    // 验证评估数据结构
+    if (!evaluationData || typeof evaluationData.score !== 'number') {
+      throw new Error('AI评估数据格式不正确')
+    }
+    
+    console.log('AI评估解析成功:', evaluationData)
+    
+    evaluation.value = evaluationData
+    
+    // 更新最后一步为完成状态
+    aiThinkingSteps.value[3] = { text: '评估结果总结完成', status: 'completed' }
+    
+    await saveEvaluation(transcribedText.value, evaluationData)
+    
   } catch (error) {
-    console.error('处理录音失败:', error)
-    alert('处理录音失败，请稍后重试')
+    console.error('AI评估失败:', error)
+    
+    // 显示错误信息给用户
+    alert(`AI评估失败: ${error.message}\n\n请检查：\n1. 网络连接是否正常\n2. AI服务是否可用\n3. API密钥是否正确配置\n\n请稍后重试。`)
+    
+    // 重置思考步骤显示错误状态
+    aiThinkingSteps.value = [
+      { text: 'AI评估失败', status: 'completed' },
+      { text: '请检查网络连接和API配置', status: 'completed' },
+      { text: '建议稍后重试', status: 'completed' }
+    ]
+    
   } finally {
     isProcessing.value = false
     processingStatus.value = ''
     // 清空思考步骤
     setTimeout(() => {
       aiThinkingSteps.value = []
-    }, 2000)
+    }, 3000)
   }
 }
 

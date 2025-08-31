@@ -1,9 +1,9 @@
 <template>
-  <div class="flex h-screen bg-gradient-to-br from-[#003049] to-[#001D3D] text-[#EAE2B7] relative">
+  <div class="flex h-screen bg-gradient-to-br from-gray-50 to-blue-50 text-gray-900 relative">
     <!-- 移动端菜单按钮 -->
     <button
       @click="toggleMobileMenu"
-      class="md:hidden fixed top-4 left-4 z-50 p-2 bg-[#001D3D]/80 backdrop-blur-sm border border-[#EAE2B7]/20 rounded-md text-[#EAE2B7] hover:text-[#F77F00] transition-colors"
+      class="md:hidden fixed top-4 left-4 z-50 p-2 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-md text-gray-700 hover:text-primary-600 transition-colors shadow-light"
     >
       <Menu v-if="!showMobileMenu" class="w-5 h-5" />
       <X v-else class="w-5 h-5" />
@@ -11,37 +11,37 @@
 
     <!-- 左侧导航面板 -->
     <div :class="[
-      'bg-[#001D3D]/50 backdrop-blur-sm border-r border-[#EAE2B7]/20 flex flex-col transition-transform duration-300 ease-in-out',
+      'bg-white/90 backdrop-blur-sm border-r border-gray-200 flex flex-col transition-transform duration-300 ease-in-out shadow-light',
       'md:w-80 md:relative md:translate-x-0',
       'fixed inset-y-0 left-0 w-80 z-40',
       showMobileMenu ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
     ]">
       <!-- 用户信息区域 -->
-      <div class="p-4 border-b border-[#EAE2B7]/20">
+      <div class="p-4 border-b border-gray-200">
         <div class="flex items-center justify-between">
           <div class="flex items-center space-x-3">
-            <div class="w-8 h-8 bg-[#F77F00] rounded-full flex items-center justify-center">
+            <div class="w-8 h-8 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center">
               <User class="w-4 h-4 text-white" />
             </div>
             <div>
-              <p class="text-sm font-medium text-[#EAE2B7]">{{ userEmail }}</p>
-              <p class="text-xs text-[#EAE2B7]/65">讲解员</p>
+              <p class="text-sm font-medium text-gray-900">{{ userEmail }}</p>
+              <p class="text-xs text-gray-600">讲解员</p>
             </div>
           </div>
           <div class="flex items-center space-x-1">
             <button 
               @click="goToWelcome" 
-              class="p-2 hover:bg-[#EAE2B7]/10 rounded-md transition-colors"
+              class="p-2 hover:bg-gray-100 rounded-md transition-colors"
               title="返回欢迎页"
             >
-              <Home class="w-4 h-4 text-[#EAE2B7]/65" />
+              <Home class="w-4 h-4 text-gray-500" />
             </button>
             <button 
               @click="handleSignOut" 
-              class="p-2 hover:bg-[#EAE2B7]/10 rounded-md transition-colors"
+              class="p-2 hover:bg-gray-100 rounded-md transition-colors"
               title="退出登录"
             >
-              <LogOut class="w-4 h-4 text-[#EAE2B7]/65" />
+              <LogOut class="w-4 h-4 text-gray-500" />
             </button>
           </div>
         </div>
@@ -53,11 +53,11 @@
           <div v-for="section in sections" :key="section.name" class="mb-4">
             <!-- 展区标题 -->
             <div class="flex items-center justify-between mb-2">
-              <h3 class="text-[#EAE2B7] font-medium text-sm uppercase tracking-wide">
+              <h3 class="text-gray-900 font-medium text-sm uppercase tracking-wide">
                 {{ section.name }}
               </h3>
               <ChevronDown 
-                :class="['w-4 h-4 text-[#EAE2B7]/65 transition-transform', 
+                :class="['w-4 h-4 text-gray-500 transition-transform cursor-pointer', 
                          section.expanded ? 'rotate-180' : '']"
                 @click="toggleSection(section)"
               />
@@ -68,11 +68,11 @@
               <div v-for="module in section.modules" :key="module.name" class="mb-3">
                 <!-- 模块标题 -->
                 <div class="flex items-center justify-between mb-1">
-                  <h4 class="text-[#EAE2B7]/80 font-medium text-xs uppercase tracking-wide px-2">
+                  <h4 class="text-gray-700 font-medium text-xs uppercase tracking-wide px-2">
                     {{ module.name }}
                   </h4>
                   <ChevronDown 
-                    :class="['w-3 h-3 text-[#EAE2B7]/50 transition-transform cursor-pointer', 
+                    :class="['w-3 h-3 text-gray-400 transition-transform cursor-pointer', 
                              module.expanded ? 'rotate-180' : '']"
                     @click="toggleModule(module)"
                   />
@@ -88,20 +88,20 @@
                       'w-full text-left px-3 py-2 rounded-md text-sm transition-all',
                       'border-l-3 border-transparent',
                       selectedParagraph?.id === paragraph.id
-                        ? 'text-[#F77F00] bg-[#F77F00]/10 border-l-[#F77F00]'
-                        : 'text-[#EAE2B7]/65 hover:text-[#EAE2B7] hover:bg-[#EAE2B7]/5'
+                        ? 'text-primary-600 bg-primary-50 border-l-primary-500'
+                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                     ]"
                   >
                     {{ paragraph.title }}
                     <!-- 进度指示器 -->
                     <div class="mt-1 flex items-center space-x-1">
-                      <div class="flex-1 h-1 bg-[#EAE2B7]/20 rounded-full overflow-hidden">
+                      <div class="flex-1 h-1 bg-gray-200 rounded-full overflow-hidden">
                         <div 
-                          class="h-full bg-[#F77F00] transition-all duration-300"
+                          class="h-full bg-primary-500 transition-all duration-300"
                           :style="{ width: `${getProgress(paragraph.id)}%` }"
                         ></div>
                       </div>
-                      <span class="text-xs text-[#EAE2B7]/50">{{ getProgress(paragraph.id) }}%</span>
+                      <span class="text-xs text-gray-400">{{ getProgress(paragraph.id) }}%</span>
                     </div>
                   </button>
                 </div>
@@ -126,19 +126,19 @@
         <div v-if="selectedParagraph" class="max-w-4xl mx-auto">
           <!-- 标题和元信息 -->
           <div class="mb-8">
-            <h1 class="text-3xl font-bold text-[#EAE2B7] mb-2">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">
               {{ selectedParagraph.title }}
             </h1>
-            <div class="flex items-center space-x-4 text-sm text-[#EAE2B7]/65">
+            <div class="flex items-center space-x-4 text-sm text-gray-600">
               <span>练习次数: {{ getPracticeCount(selectedParagraph.id) }}</span>
               <span>掌握度: {{ getProgress(selectedParagraph.id) }}%</span>
             </div>
           </div>
 
           <!-- 内容展示 -->
-          <div class="bg-[#001D3D]/30 rounded-lg p-6 mb-8">
-            <div class="prose prose-invert max-w-none">
-              <div class="text-[#EAE2B7] leading-relaxed whitespace-pre-wrap">{{ selectedParagraph.content }}</div>
+          <div class="bg-white rounded-lg p-6 mb-8 shadow-light border border-gray-200">
+            <div class="prose max-w-none">
+              <div class="text-gray-900 leading-relaxed whitespace-pre-wrap">{{ selectedParagraph.content }}</div>
             </div>
           </div>
 
@@ -148,20 +148,20 @@
         <!-- 空状态 -->
         <div v-else class="flex items-center justify-center h-full">
           <div class="text-center">
-            <BookOpen class="w-16 h-16 text-[#EAE2B7]/30 mx-auto mb-4" />
-            <p class="text-[#EAE2B7]/65 text-lg">请选择一个段落开始学习</p>
+            <BookOpen class="w-16 h-16 text-gray-300 mx-auto mb-4" />
+            <p class="text-gray-500 text-lg">请选择一个段落开始学习</p>
           </div>
         </div>
       </div>
 
       <!-- 固定底部操作按钮 -->
-      <div v-if="selectedParagraph" class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#001D3D] to-[#001D3D]/95 backdrop-blur-sm border-t border-[#EAE2B7]/20 p-4 md:p-6">
+      <div v-if="selectedParagraph" class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-white to-white/95 backdrop-blur-sm border-t border-gray-200 p-4 md:p-6 shadow-heavy">
         <div class="max-w-4xl mx-auto">
           <div class="flex flex-col md:flex-row items-center justify-center space-y-3 md:space-y-0 md:space-x-4">
             <!-- 天文馆AI讲解员按钮 -->
             <button
               @click="openAiChat"
-              class="w-full md:w-auto px-4 md:px-6 py-3 bg-transparent border border-[#F77F00] text-[#F77F00] rounded-md hover:bg-[#F77F00]/10 transition-colors font-medium text-sm md:text-base flex items-center justify-center gap-2"
+              class="w-full md:w-auto px-4 md:px-6 py-3 bg-white border border-primary-500 text-primary-600 rounded-md hover:bg-primary-50 transition-colors font-medium text-sm md:text-base flex items-center justify-center gap-2 shadow-light"
             >
               <MessageCircle class="w-4 h-4 md:w-5 md:h-5" />
               天文馆AI讲解员
@@ -170,13 +170,13 @@
             <!-- 开始填空训练按钮 -->
             <button
               @click="startFillBlankTraining"
-              class="w-full md:w-auto px-4 md:px-6 py-3 bg-gradient-to-r from-[#F77F00] to-[#FCBF49] text-[#001D3D] rounded-md font-semibold hover:from-[#FCBF49] hover:to-[#F77F00] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center gap-2 text-sm md:text-base"
+              class="w-full md:w-auto px-4 md:px-6 py-3 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-md font-semibold hover:from-primary-600 hover:to-primary-700 transition-all duration-300 shadow-medium hover:shadow-heavy transform hover:-translate-y-1 flex items-center justify-center gap-2 text-sm md:text-base"
             >开始填空训练</button>
             
             <!-- 复述训练功能 -->
             <button
               @click="startParaphraseTraining"
-              class="w-full md:w-auto px-4 md:px-6 py-3 bg-transparent border border-[#F77F00] text-[#F77F00] rounded-md hover:bg-[#F77F00]/10 transition-colors font-medium text-sm md:text-base flex items-center justify-center gap-2"
+              class="w-full md:w-auto px-4 md:px-6 py-3 bg-white border border-primary-500 text-primary-600 rounded-md hover:bg-primary-50 transition-colors font-medium text-sm md:text-base flex items-center justify-center gap-2 shadow-light"
             >
               <Mic class="w-4 h-4" />
               复述训练

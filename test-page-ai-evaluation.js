@@ -1,43 +1,20 @@
-// SiliconFlow AI API 配置和工具函数
+// 测试页面AI评估调用是否与测试文件一致
 
-interface SiliconFlowMessage {
-  role: 'system' | 'user' | 'assistant'
-  content: string
-}
+// 模拟页面中的API调用方式
+const API_KEY = 'sk-kxbohharbychjlfrsyjyssjaqljnavahltwgjodthywuixzx';
+const BASE_URL = 'https://api.siliconflow.cn/v1';
+const MODEL = 'Pro/moonshotai/Kimi-K2-Instruct';
 
-interface SiliconFlowResponse {
-  choices: Array<{
-    message: {
-      content: string
-      role: string
-    }
-  }>
-}
-
-class SiliconFlowAPI {
-  private apiKey: string
-  private baseUrl: string
-  private model: string
-
+// 模拟SiliconFlowAPI类的evaluateParaphrase方法
+class TestSiliconFlowAPI {
   constructor() {
-    this.apiKey = import.meta.env.VITE_SILICONFLOW_API_KEY
-    this.baseUrl = import.meta.env.VITE_SILICONFLOW_BASE_URL || 'https://api.siliconflow.cn/v1'
-    this.model = import.meta.env.VITE_SILICONFLOW_MODEL || 'Qwen/Qwen2.5-7B-Instruct'
-
-    if (!this.apiKey || this.apiKey === 'your_siliconflow_api_key_here') {
-      console.warn('SiliconFlow API key not configured. Please set VITE_SILICONFLOW_API_KEY in your .env file.')
-    }
+    this.apiKey = API_KEY;
+    this.baseUrl = BASE_URL;
+    this.model = MODEL;
   }
 
-  async chat(messages: SiliconFlowMessage[], options?: {
-    onProgress?: (content: string) => void;
-    signal?: AbortSignal;
-  }): Promise<string> {
-    if (!this.apiKey || this.apiKey === 'your_siliconflow_api_key_here') {
-      throw new Error('SiliconFlow API key not configured')
-    }
-
-    const isStreaming = options?.onProgress !== undefined;
+  async chat(messages, options = {}) {
+    const isStreaming = options.onProgress !== undefined;
     
     try {
       const response = await fetch(`${this.baseUrl}/chat/completions`, {
@@ -53,12 +30,12 @@ class SiliconFlowAPI {
           max_tokens: 2000,
           stream: isStreaming
         }),
-        signal: options?.signal
-      })
+        signal: options.signal
+      });
 
       if (!response.ok) {
-        const errorText = await response.text()
-        throw new Error(`SiliconFlow API error: ${response.status} - ${errorText}`)
+        const errorText = await response.text();
+        throw new Error(`SiliconFlow API error: ${response.status} - ${errorText}`);
       }
 
       if (isStreaming) {
@@ -104,82 +81,22 @@ class SiliconFlowAPI {
         return fullContent || '抱歉，我无法回答这个问题。';
       } else {
         // 非流式响应
-        const data: SiliconFlowResponse = await response.json()
-        return data.choices[0]?.message?.content || '抱歉，我无法回答这个问题。'
+        const data = await response.json();
+        return data.choices[0]?.message?.content || '抱歉，我无法回答这个问题。';
       }
     } catch (error) {
-      console.error('SiliconFlow API error:', error)
-      throw error
+      console.error('SiliconFlow API error:', error);
+      throw error;
     }
   }
 
-  // 创建天文馆讲解员的系统提示词
-  createAstronomyGuideSystemPrompt(currentContent?: string): string {
-    const basePrompt = `你是上海天文馆的专业AI讲解员，具有以下特点：
-
-1. **专业背景**：
-   - 拥有深厚的天文学知识背景
-   - 熟悉上海天文馆的所有展区和展品
-   - 了解最新的天文学发现和研究成果
-
-2. **讲解风格**：
-   - 友好、耐心、富有启发性
-   - 能够将复杂的天文概念用通俗易懂的语言解释
-   - 善于引导观众思考和探索
-   - 注重互动和参与感
-
-3. **回答原则**：
-   - 基于科学事实，准确可靠
-   - 结合上海天文馆的展区内容
-   - 适合不同年龄层的观众
-   - 鼓励进一步学习和探索
-
-4. **服务对象**：
-   - 主要为讲解员提供专业支持
-   - 帮助解答天文相关问题
-   - 提供深入的知识讲解
-   - 协助准备讲解内容`
-
-    if (currentContent) {
-      return `${basePrompt}
-
-5. **当前讲解内容**：
-${currentContent}
-
-请基于以上内容和你的专业知识，为讲解员提供准确、生动的解答和补充说明。`
-    }
-
-    return basePrompt
-  }
-
-  // 为讲解员提供专业的天文问答服务
-  async askAstronomyGuide(
-    question: string, 
-    currentContent?: string, 
-    conversationHistory: SiliconFlowMessage[] = [],
-    options?: {
-      onProgress?: (content: string) => void;
-      signal?: AbortSignal;
-    }
-  ): Promise<string> {
-    const systemPrompt = this.createAstronomyGuideSystemPrompt(currentContent)
-    
-    const messages: SiliconFlowMessage[] = [
-      { role: 'system', content: systemPrompt },
-      ...conversationHistory,
-      { role: 'user', content: question }
-    ]
-
-    return await this.chat(messages, options)
-  }
-
-  // 为复述评估提供流式AI服务
+  // 完全复制页面中的evaluateParaphrase方法
   async evaluateParaphrase(
-    originalContent: string,
-    paraphrasedContent: string,
-    onProgress?: (content: string) => void,
-    signal?: AbortSignal
-  ): Promise<string> {
+    originalContent,
+    paraphrasedContent,
+    onProgress,
+    signal
+  ) {
     const prompt = `请作为专业的天文馆讲解员评估员，对以下复述内容进行专业评估。
 
 原文内容：
@@ -266,9 +183,9 @@ ${paraphrasedContent}
     "实用的讲解技巧建议"
   ],
   "overall_feedback": "基于实际表现的客观评价，不要过于鼓励性"
-}`
+}`;
 
-    const messages: SiliconFlowMessage[] = [
+    const messages = [
       { 
         role: 'system', 
         content: `你是一个严格的天文馆讲解员培训专家，具有以下特点：
@@ -289,12 +206,80 @@ ${paraphrasedContent}
 请严格按照专业标准进行评估，确保评分准确反映复述质量。` 
       },
       { role: 'user', content: prompt }
-    ]
+    ];
 
-    return await this.chat(messages, { onProgress, signal })
+    return await this.chat(messages, { onProgress, signal });
   }
 }
 
-// 导出单例实例
-export const siliconFlowAPI = new SiliconFlowAPI()
-export type { SiliconFlowMessage }
+// 测试函数
+async function testPageAIEvaluation() {
+  console.log('🔍 测试页面AI评估调用方式...');
+  
+  const api = new TestSiliconFlowAPI();
+  
+  const originalContent = `上海天文馆是世界上最大的天文馆之一，位于上海市浦东新区临港新城。该馆于2021年7月正式开馆，建筑面积约3.8万平方米。天文馆的设计灵感来源于天体运行轨道，整个建筑没有直角，体现了宇宙的无限和流动。`;
+  
+  const paraphrasedContent = `测试内容`; // 故意使用质量很差的复述
+  
+  try {
+    console.log('📤 使用页面相同的API调用方式...');
+    console.log('原文内容:', originalContent);
+    console.log('复述内容:', paraphrasedContent);
+    
+    let aiResponse = '';
+    
+    // 模拟页面中的流式调用
+    await api.evaluateParaphrase(
+      originalContent,
+      paraphrasedContent,
+      (partialContent) => {
+        aiResponse = partialContent;
+        console.log('📥 流式响应更新，当前长度:', aiResponse.length);
+      }
+    );
+    
+    console.log('📥 完整AI响应:');
+    console.log(aiResponse);
+    
+    // 解析AI评估结果（模拟页面逻辑）
+    let evaluationData;
+    try {
+      // 尝试直接解析JSON
+      evaluationData = JSON.parse(aiResponse);
+    } catch (parseError) {
+      console.log('直接JSON解析失败，尝试提取JSON部分');
+      // 尝试从响应中提取JSON部分
+      const jsonMatch = aiResponse.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        evaluationData = JSON.parse(jsonMatch[0]);
+      } else {
+        throw new Error('无法从AI响应中提取有效的JSON数据');
+      }
+    }
+    
+    console.log('✅ 页面方式解析成功:');
+    console.log('评分:', evaluationData.score);
+    console.log('各维度评分:', {
+      accuracy: evaluationData.accuracy_score,
+      completeness: evaluationData.completeness_score,
+      clarity: evaluationData.clarity_score,
+      presentation: evaluationData.presentation_score
+    });
+    console.log('总体反馈:', evaluationData.overall_feedback);
+    
+    // 验证评分是否合理
+    if (evaluationData.score > 40) {
+      console.log('⚠️  警告: 页面方式评分', evaluationData.score, '分可能过高！');
+      console.log('💡 期望评分应该在30分以下');
+    } else {
+      console.log('✅ 页面方式评分合理: 给出了', evaluationData.score, '分的低分');
+    }
+    
+  } catch (error) {
+    console.error('❌ 页面方式测试失败:', error.message);
+  }
+}
+
+// 运行测试
+testPageAIEvaluation();

@@ -28,6 +28,9 @@ export default defineConfig({
     },
   },
   server: {
+    // 暂时禁用HTTPS，使用HTTP + 手动权限授予
+    // https: true,
+    host: true, // 允许外部访问
     proxy: {
       '/api': {
         target: 'http://localhost:3001',
