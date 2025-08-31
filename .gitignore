@@ -23,3 +23,23 @@ dist-ssr
 *.sln
 *.sw?
 .vite
+
+# Vercel
+.vercel
+
+# Trae AI助手
+.trae/
+
+# Test and debug files
+test-*.js
+test-*-debug.js
+
+# Development documentation (keep only final docs)
+AI评估逻辑修复说明文档.md
+AI评估逻辑修复文档.md
+AI评估逻辑修复报告.md
+AI评估严格化修复报告.md
+录音功能修复说明文档.md
+录音功能问题诊断和修复指南.md
+录音功能问题诊断报告.md
+开发需求文档.md
